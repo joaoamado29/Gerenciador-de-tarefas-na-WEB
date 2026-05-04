@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Windows 10\\\\Documents\\\\Gerenciador de Tarefas WEB\" | Where-Object { $_.Name -ne \".venv\" } | Select-Object Name)"
+    ]
+  }
+}

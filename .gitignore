@@ -1,0 +1,24 @@
+# Banco de dados local
+tasks.db
+*.db
+*.sqlite3
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Ambiente virtual
+venv/
+.venv/
+env/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Variáveis de ambiente
+.env
+
+# OS
+.DS_Store
+Thumbs.db
