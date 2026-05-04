@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import sqlite3
+import time
 
 def init_db():
     conn = sqlite3.connect('tasks.db')
@@ -54,8 +55,13 @@ def main():
     name = st.sidebar.text_input('Tarefa', placeholder='Digite a tarefa')
     status = st.sidebar.selectbox('Status', ('Pendente', 'Concluido'))
     date = st.sidebar.date_input('Data')
+    
     if st.sidebar.button('Adicionar'):
-        add_task(name, status, date)
+        if name:
+            add_task(name, status, date)
+            st.sidebar.success("Tarefa adicionada com sucesso")
+        else:
+            st.sidebar.error("Algo deu errado! Dê um nome a Tarefa. ")
 
     # AREA PRINCIPAL
     tasks = get_tasks()
@@ -72,15 +78,16 @@ def main():
     left, mid, right = st.columns(3)
 
     if left.button("Tarefa Concluída", width="stretch"):
-        write
+        pass
 
     if mid.button('Filtrar', width="stretch"):
-        write
+        pass
     
     if right.button('Deletar', width="stretch", type="primary"):
         task_id = int(selected.split('.')[0])
         delete_task(task_id)
         st.rerun()
+
 
     
 main()
