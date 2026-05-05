@@ -47,9 +47,29 @@ def delete_task(id):
     conn.commit()
     conn.close()
 
+def set_completed(id):
+    conn = sqlite3.connect('tasks.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        UPDATE tasks SET status = 'Concluido' WHERE id = ?
+    ''', (id,))
+    conn.commit()
+    conn.close()
+
+
+def filter_status(status):
+    conn = sqlite3.connect('tasks.db')
+    df = pd.read_sql_query('SELECT * FROM tasks WHERE status = ?', conn, params=(status,))
+    conn.close()
+    df.columns = ['ID', 'Tarefa', 'Status', 'Data']
+    return df
+
 def main():
     st.title('Gerenciador RAD')
     init_db()
+
+    if 'filtro_ativo' not in st.session_state:
+        st.session_state.filtro_ativo = None
 
     # MENU LATERAL
     name = st.sidebar.text_input('Tarefa', placeholder='Digite a tarefa')
@@ -66,7 +86,11 @@ def main():
     # AREA PRINCIPAL
     tasks = get_tasks()
     if tasks:
-        df = pd.DataFrame(tasks, columns=['ID', 'Tarefa', 'Status', 'Data'])
+        if st.session_state.filtro_ativo:
+            df = filter_status(st.session_state.filtro_ativo)
+
+        else:
+            df = pd.DataFrame(tasks, columns=['ID', 'Tarefa', 'Status', 'Data'])
         st.dataframe(df, hide_index=True)
     else:
         st.write('Nenhuma tarefa encontrada')
@@ -78,14 +102,29 @@ def main():
     left, mid, right = st.columns(3)
 
     if left.button("Tarefa Concluída", width="stretch"):
-        pass
+        if selected:
+            task_id = int(selected.split('.')[0])
+            set_completed(task_id)
+            st.rerun()
+            st.success("Tarefa marcada como concluída!")
+        else:
+            st.error("Nenhuma tarefa encontrada.")
 
-    if mid.button('Filtrar', width="stretch"):
-        pass
-    
-    if right.button('Deletar', width="stretch", type="primary"):
-        task_id = int(selected.split('.')[0])
-        delete_task(task_id)
+    if mid.button('Deletar', width="stretch", type="primary"):
+        if selected:
+            task_id = int(selected.split('.')[0])
+            delete_task(task_id)
+            st.rerun()
+        else:
+            st.error("Nenhuma tarefa encontrada.")
+
+    aux_filter = right.menu_button('Filtrar', options=["Concluido", "Pendente", "Todos"], width="stretch")
+    if aux_filter == "Todos":
+        st.session_state.filtro_ativo = None
+        st.rerun()
+
+    elif aux_filter in ("Concluido", "Pendente"):
+        st.session_state.filtro_ativo = aux_filter
         st.rerun()
 
 
