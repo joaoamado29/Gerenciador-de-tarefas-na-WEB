@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import sqlite3
-import time
 
 def init_db():
     conn = sqlite3.connect('tasks.db')
@@ -127,6 +126,8 @@ def main():
         st.session_state.filtro_ativo = aux_filter
         st.rerun()
 
+    status_counts = pd.DataFrame(tasks, columns=['ID', 'Tarefa', 'Status', 'Data'])['Status'].value_counts()
+    st.bar_chart(pd.DataFrame([status_counts.to_dict()]))
 
     
 main()
