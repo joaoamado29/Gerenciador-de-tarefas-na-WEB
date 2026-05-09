@@ -1,10 +1,8 @@
 import os
 import pytest
 
-os.environ["DB_PATH"] = ":memory:"
-
 from database.migrations import init_db
-from models.task import Task, TaskStatus
+from models.task import TaskStatus
 from repositories.task_repository import (
     add_task,
     delete_task,
@@ -15,10 +13,11 @@ from repositories.task_repository import (
 
 
 @pytest.fixture(autouse=True)
-def setup_db():
+def setup_db(tmp_path):
+    os.environ["DB_PATH"] = str(tmp_path / "test.db")
     init_db()
     yield
-    # banco em memória é descartado automaticamente
+    del os.environ["DB_PATH"]
 
 
 def test_add_and_get_task():

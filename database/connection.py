@@ -2,12 +2,10 @@ import os
 import sqlite3
 from contextlib import contextmanager
 
-DB_PATH = os.getenv("DB_PATH", "tasks.db")
-
-
 @contextmanager
 def get_connection():
-    conn = sqlite3.connect(DB_PATH)
+    db_path = os.getenv("DB_PATH", "tasks.db")
+    conn = sqlite3.connect(db_path)
     try:
         yield conn
         conn.commit()

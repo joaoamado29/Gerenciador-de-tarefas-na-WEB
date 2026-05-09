@@ -70,6 +70,22 @@ O app abrirá automaticamente no navegador em `http://localhost:8501`.
     └── charts.py                # Gráfico de status
 ```
 
+## Testes
+
+Instale as dependências de desenvolvimento:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+Rode os testes:
+
+```bash
+pytest -v
+```
+
+Os testes usam um banco SQLite temporário isolado — não afetam o `tasks.db` local.
+
 ## Banco de dados
 
 O banco SQLite (`tasks.db`) é criado automaticamente na raiz do projeto ao executar o app pela primeira vez. Para usar um caminho diferente, defina a variável de ambiente:
