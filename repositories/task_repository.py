@@ -4,25 +4,40 @@ from database.connection import get_connection
 from models.task import Task, TaskStatus
 
 
-def add_task(name: str, status: TaskStatus, due_date: str) -> None:
+def get_table_names() -> list[str]:
+    with get_connection() as conn:
+        cursor = conn.execute('SELECT name FROM tables ORDER BY id')
+        return [r[0] for r in cursor.fetchall()]
+
+
+def add_table(name: str) -> None:
+    with get_connection() as conn:
+        conn.execute('INSERT OR IGNORE INTO tables (name) VALUES (?)', (name,))
+
+
+def add_task(table_name: str, name: str, status: TaskStatus, due_date: str) -> None:
     with get_connection() as conn:
         conn.execute(
-            'INSERT INTO tasks (name, status, due_date) VALUES (?, ?, ?)',
-            (name, status.value, str(due_date)),
+            'INSERT INTO tasks (table_name, name, status, due_date) VALUES (?, ?, ?, ?)',
+            (table_name, name, status.value, str(due_date)),
         )
 
 
-def get_tasks() -> list[Task]:
+def get_tasks(table_name: str) -> list[Task]:
     with get_connection() as conn:
-        cursor = conn.execute('SELECT * FROM tasks')
+        cursor = conn.execute(
+            'SELECT id, name, status, due_date FROM tasks WHERE table_name = ?',
+            (table_name,),
+        )
         rows = cursor.fetchall()
     return [Task(id=r[0], name=r[1], status=r[2], due_date=r[3]) for r in rows]
 
 
-def get_tasks_by_status(status: TaskStatus) -> list[Task]:
+def get_tasks_by_status(table_name: str, status: TaskStatus) -> list[Task]:
     with get_connection() as conn:
         cursor = conn.execute(
-            'SELECT * FROM tasks WHERE status = ?', (status.value,)
+            'SELECT id, name, status, due_date FROM tasks WHERE table_name = ? AND status = ?',
+            (table_name, status.value),
         )
         rows = cursor.fetchall()
     return [Task(id=r[0], name=r[1], status=r[2], due_date=r[3]) for r in rows]

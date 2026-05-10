@@ -14,14 +14,19 @@ def render_task_list() -> list[Task]:
     if 'filtro_ativo' not in st.session_state:
         st.session_state.filtro_ativo = None
 
-    tasks = get_tasks()
+    table_name = st.session_state.get('selected_table')
+    if not table_name:
+        st.write('Selecione uma tabela na barra lateral.')
+        return []
+
+    tasks = get_tasks(table_name)
 
     if not tasks:
         st.write('Nenhuma tarefa encontrada')
         return tasks
 
     if st.session_state.filtro_ativo:
-        displayed = get_tasks_by_status(TaskStatus(st.session_state.filtro_ativo))
+        displayed = get_tasks_by_status(table_name, TaskStatus(st.session_state.filtro_ativo))
     else:
         displayed = tasks
 
