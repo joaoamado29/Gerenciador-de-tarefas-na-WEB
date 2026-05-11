@@ -1,5 +1,14 @@
+"""Rodapé fixo do app (HTML + CSS injetados via st.markdown)."""
+
 import streamlit as st
+
+
 def rodape_text():
+    """Renderiza o rodapé com copyright e link do GitHub.
+
+    Usa ``unsafe_allow_html=True`` porque o Streamlit não tem um
+    componente nativo para rodapé estilizado.
+    """
     st.markdown(
         """
         <style>

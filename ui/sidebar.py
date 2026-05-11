@@ -1,3 +1,5 @@
+"""Barra lateral: criação de tarefas e gerenciamento de tabelas."""
+
 import streamlit as st
 
 from models.task import TaskStatus
@@ -10,14 +12,17 @@ from repositories.task_repository import (
 
 
 def render_sidebar() -> None:
+    """Renderiza a sidebar com dois expanders: Tarefas e Tabelas."""
 
     st.sidebar.header('Gerenciador de Tarefas', divider='gray')
     st.sidebar.write('')
 
     tables = get_table_names()
 
-    # Gerenciar Tarefas 
+    # --- Expander Tarefas: adicionar uma tarefa nova ---------------------
     with st.sidebar.expander('**Tarefas**', expanded=False):
+        # A chave 'selected_table' é lida em ui/task_list.py para saber
+        # qual tabela exibir na área principal.
         table_name = st.selectbox('Tabela', tables, key='selected_table')
         name = st.text_input('Tarefa', placeholder='Digite a tarefa')
         status = st.selectbox('Status', [s.value for s in TaskStatus])
@@ -32,7 +37,7 @@ def render_sidebar() -> None:
             else:
                 st.error('Dê um nome à tarefa.')
 
-    # Gerenciar Tabelas
+    # --- Expander Tabela: criar / deletar categorias ---------------------
     with st.sidebar.expander('**Tabela**', expanded=False):
         new_table = st.text_input(
             'Nova tabela', placeholder='Nome da tabela', key='new_table_name'
@@ -41,6 +46,7 @@ def render_sidebar() -> None:
             if new_table.strip():
                 add_table(new_table.strip())
                 st.success(f'Tabela "{new_table.strip()}" criada.')
+                # rerun para o selectbox de tabelas refletir a nova entrada.
                 st.rerun()
             else:
                 st.error('Dê um nome à tabela.')
@@ -55,5 +61,3 @@ def render_sidebar() -> None:
                 st.rerun()
             else:
                 st.error('Selecione uma tabela.')
-
-
