@@ -4,7 +4,9 @@ import pytest
 from database.migrations import init_db
 from models.task import TaskStatus
 from repositories.task_repository import (
+    add_table,
     add_task,
+    delete_table,
     delete_task,
     get_table_names,
     get_tasks,
@@ -19,12 +21,35 @@ TABLE = "Obrigacoes"
 def setup_db(tmp_path):
     os.environ["DB_PATH"] = str(tmp_path / "test.db")
     init_db()
+    add_table("Obrigacoes")
+    add_table("Lazer")
+    add_table("Projetos")
     yield
     del os.environ["DB_PATH"]
 
 
-def test_default_tables_seeded():
-    assert get_table_names() == ["Obrigacoes", "Lazer", "Projetos"]
+def test_init_db_starts_empty(tmp_path):
+    os.environ["DB_PATH"] = str(tmp_path / "fresh.db")
+    init_db()
+    assert get_table_names() == []
+
+
+def test_add_table():
+    add_table("Estudos")
+    assert "Estudos" in get_table_names()
+
+
+def test_add_table_is_idempotent():
+    add_table("Obrigacoes")
+    names = get_table_names()
+    assert names.count("Obrigacoes") == 1
+
+
+def test_delete_table_removes_table_and_tasks():
+    add_task("Lazer", "Cinema", TaskStatus.PENDING, "2025-12-02")
+    delete_table("Lazer")
+    assert "Lazer" not in get_table_names()
+    assert get_tasks("Lazer") == []
 
 
 def test_add_and_get_task():

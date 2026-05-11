@@ -15,6 +15,12 @@ def add_table(name: str) -> None:
         conn.execute('INSERT OR IGNORE INTO tables (name) VALUES (?)', (name,))
 
 
+def delete_table(name: str) -> None:
+    with get_connection() as conn:
+        conn.execute('DELETE FROM tasks WHERE table_name = ?', (name,))
+        conn.execute('DELETE FROM tables WHERE name = ?', (name,))
+
+
 def add_task(table_name: str, name: str, status: TaskStatus, due_date: str) -> None:
     with get_connection() as conn:
         conn.execute(
