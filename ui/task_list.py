@@ -41,7 +41,7 @@ def render_task_list() -> list[Task]:
     else:
         displayed = tasks
 
-    st.dataframe(tasks_to_dataframe(displayed), hide_index=True)
+    st.dataframe(tasks_to_dataframe(displayed), hide_index=True, width='stretch')
 
     # Formato "ID. Nome" para conseguir extrair o ID com split('.') depois.
     selected = st.selectbox('Selecione a tarefa', [f"{t.id}. {t.name}" for t in tasks])

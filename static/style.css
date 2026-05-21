@@ -1,0 +1,50 @@
+@media (max-width: 640px) {
+    /* Remove padding excessivo */
+    .main .block-container {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+        max-width: 100% !important;
+    }
+
+    /* Empilha colunas verticalmente */
+    [data-testid="stHorizontalBlock"],
+    [data-testid="stColumns"] {
+        flex-direction: column !important;
+        gap: 0.4rem !important;
+    }
+
+    [data-testid="column"],
+    [data-testid="stColumn"] {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        min-width: 100% !important;
+    }
+
+    /* Botões ocupam largura total */
+    [data-testid="stButton"] > button {
+        width: 100% !important;
+    }
+
+    /* Gráfico não transborda */
+    [data-testid="stVegaLiteChart"],
+    [data-testid="stArrowVegaLiteChart"],
+    .element-container .stVegaLiteChart {
+        overflow-x: auto !important;
+        width: 100% !important;
+    }
+
+    /* Dataframe com scroll horizontal se necessário */
+    [data-testid="stDataFrame"] {
+        overflow-x: auto !important;
+        width: 100% !important;
+    }
+
+    /* Rodapé não transborda */
+    .footer {
+        word-break: break-word;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+
+}
